@@ -90,11 +90,15 @@ fn rank_clubs(mut standings: HashMap<String, ClubStats>) -> Vec<(String, ClubSta
 }
 
 fn main() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+    let in_path = &args[1];
+    println!("innnn::::: {in_path}");
+
     // TODO: fn open_scores_stream()
     // Q: Is there a way to cleanly get project root directory?
     // Create a path to the scores file
-    let mut path = PathBuf::from(env::current_dir().unwrap());
-    path.push("scores_tie.csv");
+    let path = PathBuf::from(in_path);
+    // path.push("scores_tie.csv");
 
     // Open the path in read-only mode, returns `io::Result<File>`, then pass
     // to a BufReader to create an iterator over each line
@@ -117,8 +121,8 @@ fn main() -> Result<(), String> {
     let mut path = PathBuf::from(env::current_dir().unwrap());
     path.push("standings.csv");
     let mut file = match File::create(&path) {
-        Err(why) => panic!("Couldn't create {}: {}", path.display(), why),
         Ok(file) => file,
+        Err(error) => panic!("Couldn't create {}: {}", path.display(), error),
     };
 
     file.write_all(String::from("Club, MP, W, D, L, GF, GA, GD, Pts\n").as_bytes())
